@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -9,35 +8,19 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Alertas Sonoras',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Alertas de Emergencia'),
     );
   }
 }
-
-
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -50,12 +33,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  // Lista de sonidos de emergencia (debes agregar los archivos en assets/audio/)
-  final List<Map<String, String>> emergencySounds = [
-    {'label': 'Alerta General', 'file': 'alerta_general.mp3'},
-    {'label': 'Emergencia Médica', 'file': 'emergencia_medica.mp3'},
-    {'label': 'Incendio', 'file': 'incendio.mp3'},
-    {'label': 'Caída', 'file': 'caida.mp3'},
+  final List<Map<String, dynamic>> emergencySounds = [
+    {'label': 'Alerta General', 'file': 'sonido de emergencia.mp3', 'icon': Icons.warning},
+    {'label': 'Emergencia Medica', 'file': 'emergencia medica.mp3', 'icon': Icons.medical_services},
+    {'label': 'Incendio', 'file': 'incendio1.mp3', 'icon': Icons.local_fire_department},
+    {'label': 'Caricatura', 'file': 'caricatura.mp3', 'icon': Icons.health_and_safety},
   ];
 
   void _playSound(String fileName) async {
@@ -66,33 +48,48 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 184, 29, 163),
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Alertas Sonoras'),
+        backgroundColor: const Color.fromARGB(255, 233, 125, 255),
+        title: Text(widget.title, style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+        centerTitle: true,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Presiona un botón de emergencia:',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              'Selecciona una alerta',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            ...emergencySounds.map((sound) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: ElevatedButton.icon(
+            const SizedBox(height: 40),
+            Expanded(
+              child: ListView.separated(
+                itemCount: emergencySounds.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 20),
+                itemBuilder: (context, index) {
+                  final sound = emergencySounds[index];
+                  return ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(250, 60),
-                      textStyle: const TextStyle(fontSize: 20),
-                      backgroundColor: Colors.redAccent,
+                      minimumSize: const Size(double.infinity, 65),
+                      backgroundColor: const Color.fromARGB(255, 104, 11, 141),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      shadowColor: Colors.black45,
+                      elevation: 6,
+                      textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                    icon: const Icon(Icons.warning, size: 32),
-                    label: Text(sound['label']!),
-                    onPressed: () => _playSound(sound['file']!),
-                  ),
-                )),
+                    icon: Icon(sound['icon'], size: 30),
+                    label: Text(sound['label']),
+                    onPressed: () => _playSound(sound['file']),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
